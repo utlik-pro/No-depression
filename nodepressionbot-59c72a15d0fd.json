@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nodepressionbot",
+  "private_key_id": "59c72a15d0fd80bffee9acc0db50c1c06fc1c306",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDM0PSKWAF/C2vs\n5zIhUH2IX287ZF7qSHcr0iDhvZEStXrbSfAZBoxbk7lsOwusflnRW+tybAxB4Vch\nTpGlV61SsIhJRljDQ5va6+gKUI7ooeUx9yt7PjWsZSWyj/pQ10WTCEatBtVMudwW\nGc9r33QMeVdjk6CgNH4bs5Bq0dyk1CyiFoRc3hyN9eCnJxR2nvSXt78ylGQrL+hP\nzlG1TNAIw7rwVagdqO7Bp2LADrzhR4ZCtl84I3M1ylQTs70SoZtCUSchvkYuzqkQ\nsUfa8KwvTqf+Ait7o7ntTn5udPZzWocX8pNYMMpwGt+t71psawR9xN1ilYwcPEBy\n+sNZ9Ah/AgMBAAECggEADDYHUuwxuYAM9+lF720bzJc1Jzjo3OhjsVuQzE3I4N7Q\nveVev6F/mZ2NymFm0qF9RRlttpaMh2PY8UpqUo2zgPwlHRyyJlxrZfGJOnwz60Zs\n2VB7DitEnMwybL7NDLo9gGAzOfFdowy0jbjEgFs645LtlQSrMe+z0jWNcs6jbEw5\nhKp7GoCj3YuFExaqlAftMC4aQiP+DIEKH1gEi+lHIwp/v8zhL77GPTJstbTk4BYP\nN/8fbgva/v9KeYmtX/5dN4vW45IiYL+jpypqnvEjNI3hxX8yn5TNeEZTMy+vAbKd\n8zlzubSMaMGNDdPBzhyXhPGOgNrpyMEcwzbroSQ8CQKBgQD7ZPZi9ewcxuXke9DY\nYHAd7Pf8kQitRAxKv7boldiV26qRnI/O8CSxTmTrS5aMGX72q0AiwWy8EVUAt1fY\nAMUiNPHUaVHmY1TwACexvSiyA51EQp/h+ghD/rUA4iAEu7QyZJIrIseJY6NqkVkG\nIva2tNStl3nIgUZ7syxPu78dpQKBgQDQkYqo/6rUxqAYQ9bN2RYm2G8WZQvY3Xu+\naMyWEF4/TZwqZxjaGdXglYnei2rohiW8iwmpoBpR1QpP6KvS6iL3alu6gMvnWecJ\nrxtQVZANV03Mc+VRBv53IAE0EXuPOi2aZRL+014zuBcx6V0xaVrGmCGYjKa5gldW\ntnLd52P8UwKBgQCm2soVwLfoGbN4RR3Gn6uKkT+/KNwjdCjcbAaQtPQ98sBxSQLC\nDO2tqSSeb1sKvdlhCyTUbKEo6jAK+6WYPlqZa56epxCu43r6mH/AHpamIHP/XGEV\n8YgO6T1lyrAJtDPTxqCldL4PWEycbMAzrH0nozoNxZ4VEIihjbh5a1lb6QKBgEBU\ng8Y4hYJ3eS3CzuBTEwgMPcdUh2Duf5ptTJ0Ek21HDOHvRrUOvu80cH/Z1LG/nqgW\n4nYVUcjnwvR+uXCmkv5pKb3OuBW1nxNXlT8kBPh4cyCapqJlW9t2Xains8qrkSFM\nB53dp/Kf11enuPzimAMlLUeWKl6Rm0q9n5ReKHLNAoGBAM24k12nUWtmvgTKL1bG\nkHaDN49Ps8GPPM38LFDfwUpFmqggsqey3UPGpgojgllB6DSxsZ6XgzsKgFkrR1q8\n0QpuoP4vaEd3QTNyDf4yA1jUbXKU32vglfkAQvMn7J9tKtmW/yH4N0lhyuWfc06A\ntvEU1LRnI3DWpdaLPe4z+wbZ\n-----END PRIVATE KEY-----\n",
+  "client_email": "no-depression-bot@nodepressionbot.iam.gserviceaccount.com",
+  "client_id": "111802164566945112794",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/no-depression-bot%40nodepressionbot.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

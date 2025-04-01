@@ -1,0 +1,6 @@
+aiogram==3.17.0
+openai==1.58.1
+python-dotenv==1.0.1
+gspread_asyncio~=2.0.0
+google-auth==2.37.0
+aiosqlite==0.21.0
