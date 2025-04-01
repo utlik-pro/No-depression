@@ -12,6 +12,10 @@ from utils import logger
 async def main():
     # Initialize bot and dispatcher
     bot = Bot(token=TOKEN)
+
+    # Delete webhook before starting polling
+    await bot.delete_webhook()
+
     dp = Dispatcher()  # No storage needed since we're not using FSM
 
     # Initialize services
