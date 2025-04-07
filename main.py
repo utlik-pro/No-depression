@@ -10,24 +10,8 @@ from utils import logger
 
 
 async def main():
-    import os
-    
-    # Check for running instance
-    if os.path.exists("bot.lock"):
-        logger.error("Bot is already running! If not, delete bot.lock file.")
-        return
-        
-    # Create lock file
-    with open("bot.lock", "w") as f:
-        f.write(str(os.getpid()))
-        
-    try:
-        # Initialize bot and dispatcher
-        bot = Bot(token=TOKEN)
-
-    # Delete webhook before starting polling
-    await bot.delete_webhook()
-
+    # Initialize bot and dispatcher
+    bot = Bot(token=TOKEN)
     dp = Dispatcher()  # No storage needed since we're not using FSM
 
     # Initialize services
@@ -45,10 +29,6 @@ async def main():
     # Start polling
     logger.info("Starting bot")
     await dp.start_polling(bot, skip_updates=True)
-    finally:
-        # Clean up lock file
-        if os.path.exists("bot.lock"):
-            os.remove("bot.lock")
 
 
 if __name__ == "__main__":

@@ -23,7 +23,9 @@ class SQLiteService:
                 username TEXT,
                 url TEXT,
                 current_question INTEGER DEFAULT 0,
-                score INTEGER DEFAULT 0,
+                question_order_json TEXT,
+                depression_score INTEGER DEFAULT -1,
+                anxiety_score INTEGER DEFAULT -1,
                 created_at TEXT,
                 updated_at TEXT
             )
@@ -60,10 +62,11 @@ class SQLiteService:
                     # Insert new user
                     await db.execute(
                         """INSERT INTO users 
-                           (id, first_name, last_name, username, url, current_question, score, created_at, updated_at)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                           (id, first_name, last_name, username, url, current_question,
+                           depression_score, anxiety_score, created_at, updated_at)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                         (user_data["id"], user_data["first_name"], user_data["last_name"],
-                         user_data["username"], user_data["url"], 0, 0, current_time, current_time)
+                         user_data["username"], user_data["url"], 0, -1, -1, current_time, current_time)
                     )
 
                 await db.commit()
@@ -74,39 +77,94 @@ class SQLiteService:
             logger.error(f"Error saving user to SQLite: {e}")
             return False
 
-    async def save_test_progress(self, progress_data):
+    async def save_mixed_test_progress(self, progress_data):
         """
-        Save test progress directly to the users table
+        Save mixed test progress to the users table
         """
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-                # Update user record with test progress
+                # Update user record with mixed test progress
                 await db.execute(
                     """UPDATE users SET 
-                       current_question = ?, score = ?, updated_at = ?
+                       question_order_json = ?, current_question = ?, updated_at = ?
                        WHERE id = ?""",
-                    (progress_data["current_question"], progress_data["score"],
+                    (progress_data["question_order_json"], progress_data["current_question"],
+                     # Используем правильный ключ
                      current_time, progress_data["user_id"])
                 )
 
                 await db.commit()
-                logger.info(f"Test progress for user {progress_data['user_id']} saved to SQLite")
+                logger.info(f"Mixed test progress for user {progress_data['user_id']} saved to SQLite")
                 return True
 
         except Exception as e:
-            logger.error(f"Error saving test progress to SQLite: {e}")
+            logger.error(f"Error saving mixed test progress to SQLite: {e}")
+            return False
+
+    async def update_question_progress(self, user_id, next_question):
+        """
+        Update the current question index for a user
+        """
+        try:
+            async with aiosqlite.connect(self.db_path) as db:
+                current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                await db.execute(
+                    """UPDATE users SET 
+                       current_question = ?, updated_at = ?
+                       WHERE id = ?""",
+                    (next_question, current_time, user_id)
+                )
+
+                await db.commit()
+                logger.info(f"Question progress for user {user_id} updated to {next_question}")
+                return True
+
+        except Exception as e:
+            logger.error(f"Error updating question progress in SQLite: {e}")
+            return False
+
+    async def save_test_result(self, user_id, test_type, score):
+        """
+        Save test result to the users table
+        """
+        try:
+            async with aiosqlite.connect(self.db_path) as db:
+                current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+                if test_type == "depression":
+                    await db.execute(
+                        """UPDATE users SET 
+                           depression_score = ?, updated_at = ?
+                           WHERE id = ?""",
+                        (score, current_time, user_id)
+                    )
+                elif test_type == "anxiety":
+                    await db.execute(
+                        """UPDATE users SET 
+                           anxiety_score = ?, updated_at = ?
+                           WHERE id = ?""",
+                        (score, current_time, user_id)
+                    )
+
+                await db.commit()
+                logger.info(f"{test_type.capitalize()} test result for user {user_id} saved to SQLite: {score}")
+                return True
+
+        except Exception as e:
+            logger.error(f"Error saving test result to SQLite: {e}")
             return False
 
     async def get_test_progress(self, user_id):
         """
-        Get test progress from the users table
+        Get test progress from the users table including question order
         """
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 async with db.execute(
-                        "SELECT current_question, score FROM users WHERE id = ?",
+                        "SELECT current_question, question_order_json, depression_score, anxiety_score FROM users WHERE id = ?",
                         (user_id,)
                 ) as cursor:
                     progress_row = await cursor.fetchone()
@@ -115,7 +173,9 @@ class SQLiteService:
                     return {
                         "user_id": user_id,
                         "current_question": progress_row[0],
-                        "score": progress_row[1]
+                        "question_order_json": progress_row[1],
+                        "depression_score": progress_row[2],
+                        "anxiety_score": progress_row[3]
                     }
                 return None
 
@@ -123,20 +183,29 @@ class SQLiteService:
             logger.error(f"Error getting test progress from SQLite: {e}")
             return None
 
-    async def reset_test_progress(self, user_id):
+    async def reset_test_progress(self, user_id, keep_results=False):
         """
-        Reset test progress in the users table
+        Reset test progress in the users table, optionally keeping test results
         """
         try:
             async with aiosqlite.connect(self.db_path) as db:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-                await db.execute(
-                    """UPDATE users SET 
-                       current_question = ?, score = ?, updated_at = ?
-                       WHERE id = ?""",
-                    (0, 0, current_time, user_id)
-                )
+                if keep_results:
+                    await db.execute(
+                        """UPDATE users SET 
+                           question_order_json = NULL, current_question = 0, updated_at = ?
+                           WHERE id = ?""",
+                        (current_time, user_id)
+                    )
+                else:
+                    await db.execute(
+                        """UPDATE users SET 
+                           question_order_json = NULL, current_question = 0, 
+                           depression_score = -1, anxiety_score = -1, updated_at = ?
+                           WHERE id = ?""",
+                        (current_time, user_id)
+                    )
 
                 await db.commit()
                 logger.info(f"Test progress for user {user_id} reset in SQLite")
