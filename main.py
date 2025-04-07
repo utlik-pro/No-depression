@@ -11,6 +11,17 @@ from utils import logger
 
 async def main():
     try:
+        import os
+        
+        # Check for lock file
+        if os.path.exists("bot.lock"):
+            logger.error("Bot is already running! If not, delete bot.lock file.")
+            return
+            
+        # Create lock file
+        with open("bot.lock", "w") as f:
+            f.write(str(os.getpid()))
+            
         # Initialize bot and dispatcher
         bot = Bot(token=TOKEN)
 
@@ -40,7 +51,11 @@ async def main():
         raise
     finally:
         logger.info("Shutting down bot")
-        await bot.session.close()
+        if 'bot' in locals():
+            await bot.session.close()
+        # Clean up lock file
+        if os.path.exists("bot.lock"):
+            os.remove("bot.lock")
 
 
 if __name__ == "__main__":
