@@ -10,25 +10,37 @@ from utils import logger
 
 
 async def main():
-    # Initialize bot and dispatcher
-    bot = Bot(token=TOKEN)
-    dp = Dispatcher()  # No storage needed since we're not using FSM
+    try:
+        # Initialize bot and dispatcher
+        bot = Bot(token=TOKEN)
 
-    # Initialize services
-    sheets_service = SheetsService()
-    sqlite_service = SQLiteService(db_path="nodepressionbot.db")
-    start_service = StartService(sheets_service, sqlite_service)
-    news_service = NewsService(bot, sheets_service)
+        # Delete webhook and wait a bit to ensure clean state
+        await bot.delete_webhook(drop_pending_updates=True)
+        await asyncio.sleep(1)
 
-    # Initialize router
-    telegram_router = TelegramRouter(bot, start_service, news_service, sheets_service)
+        dp = Dispatcher()  # No storage needed since we're not using FSM
 
-    # Register router
-    dp.include_router(telegram_router.router)
+        # Initialize services
+        sheets_service = SheetsService()
+        sqlite_service = SQLiteService(db_path="nodepressionbot.db")
+        start_service = StartService(sheets_service, sqlite_service)
+        news_service = NewsService(bot, sheets_service)
 
-    # Start polling
-    logger.info("Starting bot")
-    await dp.start_polling(bot, skip_updates=True)
+        # Initialize router
+        telegram_router = TelegramRouter(bot, start_service, news_service, sheets_service)
+
+        # Register router
+        dp.include_router(telegram_router.router)
+
+        # Start polling
+        logger.info("Starting bot")
+        await dp.start_polling(bot, skip_updates=True)
+    except Exception as e:
+        logger.error(f"Critical error: {e}")
+        raise
+    finally:
+        logger.info("Shutting down bot")
+        await bot.session.close()
 
 
 if __name__ == "__main__":
