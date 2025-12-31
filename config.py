@@ -18,7 +18,10 @@ JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
 
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
+# OpenAI client (optional)
+openai_client = None
+if OPENAI_API_KEY:
+    openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 # Функция для форматирования текста в зависимости от пола
