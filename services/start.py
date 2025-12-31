@@ -9,13 +9,26 @@ class StartService:
         self.sheets_service = sheets_service
         self.sqlite_service = sqlite_service
 
+    async def init_demographic_questions(self, user_id):
+        """
+        Initialize the demographic questions phase for a user
+        """
+        # Set the current phase to demographic
+        await self.sqlite_service.init_demographic_questions(user_id)
+
+        # Log the initialization
+        logger.info(f"Demographic questions initialized for user {user_id}")
+
+    async def update_demographic_question(self, user_id, question_num):
+        """
+        Update the current demographic question number
+        """
+        await self.sqlite_service.update_demographic_question(user_id, question_num)
+
     async def init_mixed_test(self, user_info):
         """
         Initialize a mixed test with questions from both depression and anxiety tests
         """
-        # Save user info to database
-        await self.sqlite_service.save_user(user_info)
-
         # Create a mixed order of questions
         question_order = []
 
@@ -90,7 +103,7 @@ class StartService:
     def get_combined_recommendation(self, depression_score, anxiety_score):
         """
         Generate recommendation based on combined depression and anxiety scores
-        with empathetic language and promotion code
+        with empathetic language, emojis and promotion code
         """
         # Determine depression severity
         depression_severity = None
@@ -109,32 +122,38 @@ class StartService:
             anxiety_severity = "высокий уровень тревожности"
 
         # Build empathetic recommendation message
-        message = "Результаты вашего теста:\n\n"
+        message = "Результаты вашего теста❗️\n"
 
         # Add specific results based on what was detected
         if depression_severity and anxiety_severity:
             # Both depression and anxiety detected
-            message += f"Мы видим у вас {depression_severity} и {anxiety_severity}. Важно знать, что вы не одиноки в своих переживаниях, и есть способы улучшить ваше состояние.\n\n"
+            message += f"⚠️ Мы видим у вас {depression_severity} и {anxiety_severity}. \n"
+            message += "💪 Важно знать, что вы не одиноки в своих переживаниях, и есть способы улучшить ваше состояние.\n"
         elif depression_severity:
             # Only depression detected
-            message += f"Мы видим у вас {depression_severity}. Помните, что это состояние поддается лечению, и многие люди успешно справляются с подобными трудностями.\n\n"
+            message += f"⚠️ Мы видим у вас {depression_severity}. \n"
+            message += "💪 Помните, что это состояние поддается лечению, и многие люди успешно справляются с подобными трудностями.\n"
         elif anxiety_severity:
             # Only anxiety detected
-            message += f"Мы видим у вас {anxiety_severity}. Беспокойство - это нормальная реакция на стресс, но когда оно становится постоянным, важно обратить на это внимание.\n\n"
+            message += f"⚠️ Мы видим у вас {anxiety_severity}. \n"
+            message += "💪 Беспокойство - это нормальная реакция на стресс, но когда оно становится постоянным, важно обратить на это внимание.\n"
         else:
             # Nothing significant detected
-            message += "Ваши результаты в пределах нормы. Это хороший знак, но помните, что забота о психическом здоровье важна всегда.\n\n"
+            message += "Ваши результаты в пределах нормы. \n"
+            message += "👍 Это хороший знак, но помните, что забота о психическом здоровье важна всегда.\n"
 
         # Add recommendations based on scores
         if depression_score > 10 or anxiety_score >= 19:
-            message += "Мы искренне рекомендуем вам обратиться к специалисту. Профессиональная помощь может значительно улучшить качество вашей жизни и эмоциональное состояние.\n\n"
-            message += "Запишитесь на консультацию к нашим психологам уже сегодня! Используйте промокод AAA123 для получения скидки на первую сессию.\n\n"
+            message += "🩺 Мы искренне рекомендуем вам обратиться к специалисту. Профессиональная помощь может значительно улучшить качество вашей жизни и эмоциональное состояние.\n"
+            message += "📞 Запишитесь на консультацию к нашим психотерапевтам уже сегодня! \n"
+            message += "Используйте промокод НЕТДЕПРЕССИИ для скидки \n10% \nна первый визит в медицинский центр META CLINIC (https://metaclinic.by).\n"
         elif depression_score >= 8 or anxiety_score >= 10:
-            message += "Рекомендуем вам обратить внимание на своё эмоциональное состояние и изучить методы самопомощи. Также консультация специалиста может быть полезной.\n\n"
-            message += "Если вы решите обратиться к психологу, используйте промокод AAA123 для получения скидки на первую консультацию.\n\n"
+            message += "🔍 Рекомендуем вам обратить внимание на своё эмоциональное состояние и изучить методы самопомощи. Также консультация специалиста может быть полезной.\n"
+            message += "Если вы решите обратиться к психотерапевту, используйте промокод НЕТДЕПРЕССИИ для скидки \n10% \nна первую консультацию в медицинский центр META CLINIC (https://metaclinic.by).\n"
         else:
-            message += "Продолжайте следить за своим самочувствием. Профилактические консультации с психологом также могут быть полезны для поддержания эмоционального благополучия.\n\n"
-            message += "Если вы заинтересованы в профилактической консультации, используйте промокод AAA123.\n\n"
+            message += "🔎 Продолжайте следить за своим самочувствием.\n"
+            message += " Профилактические консультации с психотерапевтом также могут быть полезны для поддержания эмоционального благополучия.\n"
+            message += "Если вы заинтересованы в профилактической консультации, используйте промокод НЕТДЕПРЕССИИ для скидки \n10% \nна первый визит в медицинский центр META CLINIC (https://metaclinic.by).\n"
 
         message += "Забота о себе — это проявление силы, а не слабости. Спасибо за прохождение теста!"
 

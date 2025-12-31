@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: nodepressionbot
+    runtime: python
+    buildCommand: |
+      pip install -r requirements.txt
+      cd frontend && npm install && npm run build
+    startCommand: python main.py
+    envVars:
+      - key: TOKEN
+        sync: false
+      - key: ADMIN
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: API_PORT
+        value: "10000"
+      - key: API_HOST
+        value: "0.0.0.0"
+      - key: PYTHON_VERSION
+        value: "3.11"

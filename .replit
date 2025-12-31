@@ -14,3 +14,6 @@ requiredFiles = [".replit", "replit.nix"]
 run = ["python3", "main.py"]
 deploymentTarget = "gce"
 ignorePorts = true
+
+[agent]
+expertMode = true
